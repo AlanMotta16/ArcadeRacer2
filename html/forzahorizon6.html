@@ -4,6 +4,8 @@
 	-add more animations to make game look better
 	-use local storage to store highscores
 	-make site PWA
+	-for localStorage, figure out how to maintain counter for total number of highscores even when page reloads
+		-maybe use mapfilterreduce to find the previous newest list and start counter from there
 -->
 <!DOCTYPE ><!--DO NOT MAKE IT DOCTYPE html!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 <html lang="pt-br">
@@ -12,9 +14,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Document</title>
 		<link rel="stylesheet" href="../css/forzaestiloso.css">
+		<!--
 		<link rel="manifest" href="./manifest.json">
-		<link rel="shortcut icon" href="./icon/favicon-32x32-seochecker-manifest-4913.png" type="image/png">
-		<link rel="icon" href="./icon/favicon-32x32-seochecker-manifest-4913.png" type="image/png">
+		<link rel="shortcut icon" href="./icon/favicon-32x32-dunplab-manifest-9314.png" type="image/png">
+		<link rel="icon" href="./icon/favicon-32x32-dunplab-manifest-9314.png" type="image/png">
 		<script>
 		if ('serviceWorker' in navigator) {
 		  navigator.serviceWorker.register('./sw.js')
@@ -22,6 +25,7 @@
 			 .catch(function () {console.log('service worker failed'); });
 		}
 		</script>
+		-->
     </head>
 	<body>
 		</div>
@@ -87,7 +91,7 @@
 			function start(){
 				document.querySelector("#points").innerHTML="0000";
 				// Set the date we're counting down to
-				var countDownDate = (new Date().getTime())+100*60;
+				var countDownDate = (new Date().getTime())+1001*60;
 				// Update the count down every 1 second
 				var x = setInterval(function() {
 					// Get today's date and time
@@ -240,17 +244,21 @@
 				clearInterval(timer);
 				clearInterval(m);
 				let name=prompt("What is your gamertag?");
+				scores[scpos]={
+					"Name":name,
+					"Score":count
+				};
 				if(count<5){
-					alert("Seems like your need some more practicing.\nYou made "+count+" points.");
+					alert("Well "+name+", seems like your need some more practicing.\nYou made "+count+" points.");
 				}
 				if(count>=5&&count<10){
-					alert("You're getting the hang of this.\nYou made "+count+" points.");
+					alert("Good, "+name+", you're getting the hang of this.\nYou made "+count+" points.");
 				}
 				if(count>=10){
-					alert("Wow, you're really good at this!\nYou made "+count+" points.");
+					alert("Wow, nice job "+name+", you're really good at this!\nYou made "+count+" points.");
 				}
 				if(count>100){
-					alert("OK, I'm presumimg you're a bot and closing the window.\nYou made "+count+" points. Good day.");
+					alert("OK "+name+", I'm presumimg you're a bot and closing the window.\nYou made "+count+" points. Good day.");
 					window.close();
 				}
 				let replay=prompt("Do you want to play again? (YES/NO)")
@@ -271,17 +279,21 @@
 				smoke.style.display="none";
 				explosion.style.display="block";
 				let name=prompt("What is your gamertag?");
+				scores[scpos]={
+					"Name":name,
+					"Score":count
+				};
 				if(count<5){
-					alert("Seems like your need some more practicing.\nYou made "+count+" points.");
+					alert("Well "+name+", seems like your need some more practicing.\nYou made "+count+" points.");
 				}
 				if(count>=5&&count<10){
-					alert("You're getting the hang of this.\nYou made "+count+" points.");
+					alert("Good, "+name+", you're getting the hang of this.\nYou made "+count+" points.");
 				}
 				if(count>=10){
-					alert("Wow, you're really good at this!\nYou made "+count+" points.");
+					alert("Wow, nice job "+name+", you're really good at this!\nYou made "+count+" points.");
 				}
 				if(count>100){
-					alert("OK, I'm presumimg you're a bot and closing the window.\nYou made "+count+" points. Good day.");
+					alert("OK "+name+", I'm presumimg you're a bot and closing the window.\nYou made "+count+" points. Good day.");
 					window.close();
 				}
 				let replay=prompt("Do you want to play again? (YES/NO)")
@@ -338,6 +350,9 @@
 				}
 				*/
 			}
+			//LocalStorage functions
+			let scores=[];
+			let scpos=0;
             //Lines that are executed when page loads
 			document.querySelector("#points").addEventListener("click", ()=>{start()});
 				//Functions that are called repeatedly
