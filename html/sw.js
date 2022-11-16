@@ -3,7 +3,6 @@ const CACHE_NAME = 'my-site-cache-v1';
 const urlsToCache = [
   './forzahorizon6.html',
   './PWAicon.png',
-  './',
   './seochecker-manifest-6516.json'
 ];
 
