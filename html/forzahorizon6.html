@@ -2,33 +2,24 @@
 	-make coins not move and not count points before starting game
 	-make end screen without using alerts
 	-add more animations to make game look better
-	-use local storage to store highscores
 	-make site PWA
-	-for localStorage, figure out how to maintain counter for total number of highscores even when page reloads
-		-maybe use mapfilterreduce to find the previous newest list and start counter from there
+	-for localStorage, make alert to show highest score using mapfilterreduce
+	-use zIndex for restart screen
 -->
 <!DOCTYPE ><!--DO NOT MAKE IT DOCTYPE html!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 <html lang="pt-br">
-	<head>
+	<head><title>Arcade Racer 2</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Document</title>
 		<link rel="stylesheet" href="../css/forzaestiloso.css">
-		<!--
-		<link rel="manifest" href="./manifest.json">
-		<link rel="shortcut icon" href="./icon/favicon-32x32-dunplab-manifest-9314.png" type="image/png">
-		<link rel="icon" href="./icon/favicon-32x32-dunplab-manifest-9314.png" type="image/png">
-		<script>
-		if ('serviceWorker' in navigator) {
-		  navigator.serviceWorker.register('./sw.js')
-			 .then(function () {console.log('service worker registered');})
-			 .catch(function () {console.log('service worker failed'); });
-		}
-		</script>
-		-->
+		<link rel="shortcut icon" href="./icon/favicon-32x32-seochecker-manifest-6516.png" type="image/png">
+		<link rel="icon" href="./icon/favicon-32x32-seochecker-manifest-6516.png" type="image/png">
+		<link rel="manifest" href="./seochecker-manifest-6516.json">
     </head>
 	<body>
 		</div>
+		<div class="menu" id="menu">hello</div>
 		<div class="fundo" id="fundo">
 			<img src="../imgs/road.gif" alt="i can't stand any more roads!" class="road1">
 			<div id="timer" class="noselect red button"></div>
@@ -86,9 +77,12 @@
 			let right2=document.querySelector(".right2");
 			let right3=document.querySelector(".right3");
 			let count=0;
+			let audio=new Audio("../imgs/engine2.mp3");
 			document.querySelector("#timer").innerHTML="01m 00s";
 			//start game
 			function start(){
+				audio.play();
+				audio.loop=true;
 				document.querySelector("#points").innerHTML="0000";
 				// Set the date we're counting down to
 				var countDownDate = (new Date().getTime())+1001*60;
@@ -244,10 +238,11 @@
 				clearInterval(timer);
 				clearInterval(m);
 				let name=prompt("What is your gamertag?");
-				scores[scpos]={
-					"Name":name,
-					"Score":count
-				};
+				//Local storage stuff
+				let scpos = 1;
+				let listaJson = {"Name":name, "Score":count};
+				localStorage.setItem("lista" + scpos, JSON.stringify(listaJson));
+				scpos++;
 				if(count<5){
 					alert("Well "+name+", seems like your need some more practicing.\nYou made "+count+" points.");
 				}
@@ -279,10 +274,19 @@
 				smoke.style.display="none";
 				explosion.style.display="block";
 				let name=prompt("What is your gamertag?");
-				scores[scpos]={
-					"Name":name,
-					"Score":count
-				};
+				//Local storage stuff
+				let scpos = 1;
+				let listaJson = { "Name": name, "Score": count };
+				let scchk=localStorage.getItem(name+"'s Highscore");
+				if(scchk===null){
+					localStorage.setItem(name + "'s Highscore", JSON.stringify(listaJson));
+				}else{
+					scchk = JSON.parse(scchk);
+					if (listaJson.Score >= scchk.Score) {
+						localStorage.setItem(name + "'s Highscore", JSON.stringify(listaJson));
+					}
+				}
+				scpos++;
 				if(count<5){
 					alert("Well "+name+", seems like your need some more practicing.\nYou made "+count+" points.");
 				}
@@ -350,15 +354,12 @@
 				}
 				*/
 			}
-			//LocalStorage functions
-			let scores=[];
-			let scpos=0;
             //Lines that are executed when page loads
 			document.querySelector("#points").addEventListener("click", ()=>{start()});
-				//Functions that are called repeatedly
-				let m = setInterval("moverdireita()", 1250);
-				let n = setInterval("colisao()", 5);
-				let s = setInterval("spawns()", 15);
+			//Functions that are called repeatedly
+			let m = setInterval("moverdireita()", 1250);
+			let n = setInterval("colisao()", 5);
+			let s = setInterval("spawns()", 15);
 		</script>
 	</body>
 </html>
