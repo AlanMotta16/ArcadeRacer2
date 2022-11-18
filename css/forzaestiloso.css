@@ -11,6 +11,9 @@
     top:5vh;
     background-color:red;
 }
+#foobar{
+    display:none;
+}
 .tutorial1{
     width:27vw;
     height:40vh;
