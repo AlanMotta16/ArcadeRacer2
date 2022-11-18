@@ -2,7 +2,7 @@
 	-make coins not move and not count points before starting game
 	-make end screen without using alerts
 	-add more animations to make game look better
-	-make site PWA
+	-add sounds to game
 	-for localStorage, make alert to show highest score using mapfilterreduce
 	-use zIndex for restart screen
 -->
@@ -26,7 +26,6 @@
     </head>
 	<body>
 		</div>
-		<div class="menu" id="menu">hello</div>
 		<div class="fundo" id="fundo">
 			<img src="../imgs/road.gif" alt="i can't stand any more roads!" class="road1">
 			<div id="timer" class="noselect red button"></div>
@@ -34,7 +33,7 @@
 			<div class="noselect red button skin" id="cor">
 				<img src="../imgs/skin.png" alt="false advertisement" class="restart">
 			</div>
-			<div id="restart" class="noselect red button" onClick="window.location.reload()">
+			<div id="restart" class="noselect red button">
 				<img src="../imgs/restart.png" alt="quitter" class="restart1">
 				<img src="../imgs/restart2.png" alt="quitter" class="restart2">
 				<img src="../imgs/restart3.png" alt="quitter" class="restart3">
@@ -84,12 +83,25 @@
 			let right2=document.querySelector(".right2");
 			let right3=document.querySelector(".right3");
 			let count=0;
-			let audio=new Audio("../imgs/engine2.mp3");
+			let caraud=new Audio("../sounds/engine2.mp3");
+			let butaud=new Audio("../sounds/button.mp3");
+			let driftaud=new Audio("../sounds/drift.mp3");
+			let expaud=new Audio("../sounds/explosion.mp3");
+			let coinaud=new Audio("../sounds/coin.mp3");
+			let soundtrack=new Audio("../sounds/soundtrack.mp3");
 			document.querySelector("#timer").innerHTML="01m 00s";
 			//start game
 			function start(){
-				audio.play();
-				audio.loop=true;
+				soundtrack.play();
+				butaud.play();
+				butaud.volume=0.7;
+				caraud.play();
+				caraud.volume=0.7;
+				caraud.loop=true;
+				//Functions that are called repeatedly
+				let m = setInterval("moverdireita()", 1250);
+				let n = setInterval("colisao()", 5);
+				let s = setInterval("spawns()", 15);
 				document.querySelector("#points").innerHTML="0000";
 				// Set the date we're counting down to
 				var countDownDate = (new Date().getTime())+1001*60;
@@ -116,6 +128,7 @@
 				document.querySelector("#esquerda").addEventListener("click",()=>{esquerda()});
 				document.querySelector("#direita").addEventListener("click",()=>{direita()});
 				document.querySelector("#cor").addEventListener("click", ()=>{cor()});
+				document.querySelector("#restart").addEventListener("click", ()=>{restartgm()});
 				//Car movement through keyboard
 				window.addEventListener('keydown', (e)=>{
 					let carLeft= parseInt(getComputedStyle(div1).left);
@@ -139,6 +152,7 @@
 				});
 				//Change color theme
 				function cor(){
+					butaud.play();
 					if(cont == 0){
 						car1.style.display="none";
 						car2.style.display="block";
@@ -186,6 +200,11 @@
 							}
 						}
 					}
+				}
+				//Restart game
+				function restartgm(){
+					butaud.play();
+					window.location.reload()
 				}
 			}
             //Move coins - automatic
@@ -242,8 +261,10 @@
 			}
             //End the game
 			function end() {
+				m = setInterval("moverdireita()", 1250);
 				clearInterval(timer);
 				clearInterval(m);
+				caraud.pause();
 				let name=prompt("What is your gamertag?");
 				//Local storage stuff
 				let scpos = 1;
@@ -273,13 +294,16 @@
 				}
 			}
 			function dead() {
+				m = setInterval("moverdireita()", 1250);
 				clearInterval(timer);
 				clearInterval(m);
+				caraud.pause();
 				car1.style.display="none";
 				car2.style.display="none";
 				car3.style.display="none";
 				smoke.style.display="none";
 				explosion.style.display="block";
+				expaud.play();
 				let name=prompt("What is your gamertag?");
 				//Local storage stuff
 				let scpos = 1;
@@ -342,12 +366,9 @@
 					dead();
 				}
 				if(((div1Left+(div1Width/2))>=div2Left)&&((div1Left+(div1Width/2))<=(div2Left+div2Width))){
+					coinaud.play();
 					count++;
 					document.querySelector("#points").innerHTML=count;
-					/*
-					coin.style.display="none";
-					confetti.style.display="block";
-					*/
 					div2.style.left = Math.floor(Math.random()*(parseInt(fundoWidth)-parseInt(div2Width)));
 				}
 				/*
@@ -363,10 +384,6 @@
 			}
             //Lines that are executed when page loads
 			document.querySelector("#points").addEventListener("click", ()=>{start()});
-			//Functions that are called repeatedly
-			let m = setInterval("moverdireita()", 1250);
-			let n = setInterval("colisao()", 5);
-			let s = setInterval("spawns()", 15);
 		</script>
 	</body>
 </html>
